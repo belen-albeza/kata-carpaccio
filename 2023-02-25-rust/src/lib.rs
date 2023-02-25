@@ -13,8 +13,9 @@ where
     let items: Vec<(f64, u64)> = std::iter::zip(prices, units).collect();
 
     let net_price = net_price_for_order(&items);
+    let gross_price = add_tax(net_price);
 
-    Ok(format!("{}", net_price))
+    Ok(format!("{}", gross_price))
 }
 
 fn read_line<R>(reader: &mut R) -> String
@@ -41,6 +42,10 @@ fn net_price_for_order(items: &[(f64, u64)]) -> f64 {
         .sum()
 }
 
+fn add_tax(net_price: f64) -> f64 {
+    net_price * 1.21
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -49,5 +54,10 @@ mod tests {
     fn test_net_price_for_order() {
         let items = vec![(19.95, 1), (10.00, 2)];
         assert_eq!(net_price_for_order(&items), 39.95);
+    }
+
+    #[test]
+    fn test_add_tax() {
+        assert_eq!(add_tax(50.0), 50.0 * 1.21);
     }
 }

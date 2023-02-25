@@ -22,8 +22,8 @@ fn test_run_returns_error_when_invalid_units() {
 }
 
 #[test]
-fn test_run_returns_the_net_price_for_the_order() {
+fn test_run_returns_the_gross_price_for_the_order() {
     let input = b"9 20\n1 2";
     let result = run(&mut &input[..]);
-    assert_eq!(result, Ok("49".to_string()));
+    assert_eq!(result, Ok(format!("{}", 49.0 * 1.21)));
 }
