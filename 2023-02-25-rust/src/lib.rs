@@ -8,9 +8,11 @@ where
     let prices = parse_prices(&raw_prices).map_err(|_| "Error reading prices".to_string())?;
 
     let raw_units = read_line(reader);
-    let _ = parse_units(&raw_units).map_err(|_| "Error reading units".to_string())?;
+    let units = parse_units(&raw_units).map_err(|_| "Error reading units".to_string())?;
 
-    let net_price = net_price_for_order(&prices);
+    let items: Vec<(f64, u64)> = std::iter::zip(prices, units).collect();
+
+    let net_price = net_price_for_order(&items);
 
     Ok(format!("{}", net_price))
 }
@@ -32,6 +34,20 @@ fn parse_units(text: &str) -> Result<Vec<u64>, std::num::ParseIntError> {
     text.split(" ").map(|x| x.parse::<u64>()).collect()
 }
 
-fn net_price_for_order(prices: &[f64]) -> f64 {
-    prices.iter().sum()
+fn net_price_for_order(items: &[(f64, u64)]) -> f64 {
+    items
+        .iter()
+        .map(|(price, amount)| price * *amount as f64)
+        .sum()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_net_price_for_order() {
+        let items = vec![(19.95, 1), (10.00, 2)];
+        assert_eq!(net_price_for_order(&items), 39.95);
+    }
 }
