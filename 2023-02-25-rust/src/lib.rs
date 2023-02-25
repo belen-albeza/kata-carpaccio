@@ -1,6 +1,16 @@
 use std::io;
 
-pub fn read_line<R>(mut reader: R) -> String
+pub fn run<R>(reader: R) -> Result<String, std::num::ParseFloatError>
+where
+    R: io::BufRead,
+{
+    let raw_prices = read_line(reader);
+    let prices = parse_prices(&raw_prices)?;
+
+    Ok("0".to_string())
+}
+
+fn read_line<R>(mut reader: R) -> String
 where
     R: io::BufRead,
 {
@@ -9,11 +19,6 @@ where
     buffer.trim_end().to_string()
 }
 
-pub fn run<R>(reader: R) -> Result<String, String>
-where
-    R: io::BufRead,
-{
-    let input = read_line(reader);
-
-    Ok(input)
+fn parse_prices(text: &str) -> Result<Vec<f64>, std::num::ParseFloatError> {
+    text.split(" ").map(|x| x.parse::<f64>()).collect()
 }
